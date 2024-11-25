@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopMart</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #a6c5f0;
+    }
+    header {
+      width: 100%;
+      background: #2c445c;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    nav {
+      margin: 1rem 0;
+    }
+    nav a {
+      margin: 0 1rem;C:\Users\kirth\OneDrive\Attachments\Desktop\ecoomerce
+      color: rgb(191, 191, 198);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    nav a:hover {
+      color: #f9e905;
+    }
+    .frame {
+      width: 80%;
+      border: 1px solid #141244;
+      padding: 20px;
+      margin: 20px 0;
+      display: none; 
+      background-color: rgba(108, 213, 232, 0.688);
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
+    }
+    .active {
+      display: block; 
+    }
+    .frame:hover {
+      transform: scale(1.02);
+    }
+    .product-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); 
+      gap: 10px; 
+    }
+    .product {
+      border: 1px solid #ccc;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+      background-color: #0b7a7e;
+    }
+    .product:hover {
+      background-color: #397790;
+    }
+    .product img {
+      width: 100px; 
+      height: auto; 
+      margin-bottom: 10px; 
+    }
+    .product button {
+      background-color: #03182e;
+      color: rgb(54, 141, 190);
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .product button:hover {
+      background-color: #005bb5;
+    }
+
+    #cart-modal {
+      display: none; 
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5); 
+    }
+    .cart-content {
+      background-color: rgb(27, 129, 142);
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #1f467e;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .close-modal {
+      cursor: pointer;
+      color: #0073e6;
+      float: right;
+    }
+    #checkout-modal {
+      display: none; 
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5); 
+    }
+    .checkout-content {
+      background-color : white;
+      margin: 15%;
+      padding-left: 10px;
+      padding-right: 30px;
+      padding-bottom: 0.5cm;
+      border: 1px solid #21364b;
+      width: 100%;
+      max-width: 500px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .checkout-content h2 {
+      margin-bottom: 20px;
+      color: #2f4357;
+    }
+    .checkout-content input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .checkout-content button {
+      background-color: #255586;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      width: 100%;
+    }
+    .checkout-content button:hover {
+      background-color: #20364b;
+    }
+    #payment-modal {
+      display: none; 
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.5); 
+    }
+    .payment-content {
+      background-color : white;
+      margin: 15%;
+      padding-left: 10px;
+      padding-right: 30px;
+      padding-bottom: 0.5cm;
+      border: 1px solid #0073e6;
+      width: 100%;
+      max-width: 500px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .payment-content h2 {
+      margin-bottom: 20px;
+      color: #0073e6;
+    }
+    .payment-content input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .payment-content button {
+      background-color: #0073e6;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      width: 100%;
+    }
+    .payment-content button:hover {
+      background-color: #005bb5;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1 class="logo">ShopMart</h1>
+    <nav class="menu">
+      <a href="#" onclick="showSection('about-us')">About Us</a>
+      <a href="#" onclick="showSection('products')">Products</a>
+      <a href="#" onclick="showCart()">View Cart </a>
+      <a href="#" onclick="showSection('contacts')">Contacts</a>
+      <a href="#" onclick="showSection('social-media')">Social Media</a>
+      <a href="#" onclick="showSection('terms-and-conditions')">T&C</a>
+    </nav>
+  </header>
+
+  <div id="about-us" class="frame active">
+    <h2>About Us</h2>
+    <p>Welcome to ShopMart! We are dedicated to providing you with the best shopping experience possible. Our mission is to offer high-quality products at competitive prices. Thank you for choosing us!</p>
+  </div>
+
+  <div id="contacts" class="frame">
+    <h2>Contacts</h2>
+    <p>If you have any questions or concerns, feel free to reach out to us:</p>
+    <ul>
+      <li>Email: support@shopmart.com</li>
+      <li>Phone: +91 12345 67890</li>
+      <li>Address: 123 ShopMart Ave, Pgdio` r, NY, 100110</li>
+    </ul>
+  </div>
+
+  <div id="social-media" class="frame">
+    <h2>Social Media</h2>
+    <p>Follow us on our social media platforms:</p>
+    <ul>
+      <li><a href=" https://facebook.com/shopmart" target="_blank">Facebook</a></li>
+      <li><a href="https://twitter.com/shopmart" target="_blank">Twitter</a></li>
+      <li><a href="https://instagram.com/shopmart" target="_blank">Instagram</a></li>
+    </ul>
+  </div>
+
+  <div id="terms-and-conditions" class="frame">
+    <h2>Terms and Conditions</h2>
+    <p>Please read our terms and conditions carefully before using our website. By accessing or using our services, you agree to be bound by these terms.</p>
+  </div>
+
+  <div id="privacy-policy" class="frame">
+    <h2>Privacy Policy</h2>
+    <p>Your privacy is important to us. We are committed to protecting your personal information and your right to privacy. Please review our privacy policy for more details.</p>
+  </div>
+
+  <div id="products" class="frame">
+    <h2>Our Products</h2>
+    <div class="product-container">
+      <div class="product">
+        <img src="https://www.jiomart.com//images/product/original/493177750/apple-iphone-14-128-gb-starlight-digital-o493177750-p593687925-0-202306291917.jpeg?im=Resize=(100,100)" alt="Product 1">
+        <div>
+          <h3> Apple iPhone 14 128 GB, Starlight </h3>
+          <p>Price: ₹51,999</p>
+          <button onclick="addToCart('Product 1', 500)">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product">
+        <img src="https://www.jiomart.com//images/product/original/rvzdgcn0rc/ptron-basspods-mojo-tws-earbuds-black-product-images-orvzdgcn0rc-p610008820-0-202409231118.jpg?im=Resize=(100,100)" alt="Product 2">
+        <div>
+          <h3> pTron TWS Earbuds </h3>
+          <p>Price: ₹3,499</p>
+          <button onclick="addToCart('Product 2', 750)">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product">
+        <img src="https://www.jiomart.com//images/product/original/493837997/noise-pulse-2-max-4-69-cm-1-85-inch-display-bluetooth-calling-smart-watch-10-days-battery-550-nits-brightness-smart-dnd-100-sports-modes-smartwatch-for-men-and-women-jet-black-digital-o493837997-p610017447-0-202409241216.jpeg?im=Resize=(100,100)" alt="Product 3">
+        <div>
+          <h3> Noise Pulse 2 Max 4.69 cm</h3>
+          <p>Price: ₹3,599</p>
+          <button onclick="addToCart('Product 3', 300)">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product">
+        <img src="https://www.jiomart.com//images/product/original/491373220/prestige-1-5-litres-1500-watts-electric-kettle-pkoss-digital-o491373220-p491373220-0-202010110045.jpeg?im=Resize=(100,100)" alt="Product 4">
+        <div>
+          <h3> Prestige PKOSS 1.5L</h3>
+          <p>Price: ₹1,199</p>
+          <button onclick="addToCart('Product 4', 1200)">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product">
+        <img src="https://www.jiomart.com//images/product/original/rv2te6errg/beatxp-duke-rugged-1-43-inch-round-super-amoled-bluetooth-calling-smart-watch-functional-crown-466-466px-60hz-refresh-rate-ai-voice-assistance-100-sports-modes-24-7-health-monitoring-blue-product-images-orv2te6errg-p606880331-0-202312232020.jpg?im=Resize=(100,100)" alt="Product 5">
+        <div>
+          <h3> beatXP Duke Rugged 1.43 inch</h3>
+          <p>Price: ₹899</p>
+          <button onclick="addToCart('Product 5', 900)">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product">
+        <img src="https://www.jiomart.com/images/product/original/rvj9llsjae/vgr-v-055-professional-corded-cordless-runtime-120-min-trimmer-for-men-black-green-product-images-orvj9llsjae-p592297395-0-202309290644.jpg?im=Resize=(100,100)" alt="Product 6">
+        <div>
+          <h3>VGR V-055 Trimmer for Men</h3>
+          <p>Price: ₹649</p>
+          <button onclick="addToCart('Product 6', 650)">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product">
+        <img src="https://www.jiomart.com/images/product/original/492367966/surf-excel-easy-wash-detergent-powder-5-kg-product-images-o492367966-p590837659-0-202410161619.jpg?im=Resize=(100,100)" alt="Product 7">
+        <div>
+          <h3> Surf Excel Easy Wash Detergent Powder 5 kg </h3>
+          <p>Price: ₹399</p>
+          <button onclick="addToCart('Product 7', 400)">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product">
+        <img src="https://www.jiomart.com/images/product/original/rvmykqqbld/myhomesworld-instant-hot-water-geyser-electric-water-faucet-for-kitchen-bathroom-sink-product-images-orvmykqqbld-p603971343-0-202308182056.jpg?im=Resize=(360,360)" alt="Product 8">
+        <div>
+          <h3> Electric Water Faucet for Kitchen Bathroom, Sink </h3>
+          <p>Price: ₹1,849</p>
+          <button onclick="addToCart('Product 8', 850)">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product">
+        <img src="https://www.jiomart.com/images/product/original/rvykmhyrww/just-style-sunglasses-for-men-and-women-combo-pack-of-2-product-images-rvykmhyrww-0-202306251525.jpg?im=Resize=(100,100)" alt="Product 9">
+        <div>
+          <h3> Ronnie Full-Frame glasses</h3>
+          <p>Price: ₹1,299</p>
+          <button onclick="addToCart('Product 9', 300)">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product">
+        <img src="https://www.jiomart.com/images/product/original/rvp1gum5sb/desidiya-fairy-14-water-led-drop-string-lights-for-diwali-birthday-festival-wedding-party-for-home-patio-lawn-restaurants-home-decoration-warm-white-plug-in-product-images-orvp1gum5sb-p608143974-0-202402230903.jpg?im=Resize=(100,100)" alt="Product 10">
+        <div>
+          <h3> Desidiya Fairy light Restaurants Home Decoration </h3>
+          <p>Price: ₹1,199</p>
+          <button onclick="addToCart('Product 10', 1100)">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product">
+        <img src="https://www.jiomart.com/images/product/original/494241608/arctic-fox-hexa-maroon-and-black-plain-lunch-bag-product-images-o494241608-p605498182-0-202310072229.jpg?im=Resize=(100,100)" alt="Product 11">
+        <div>
+          <h3> Arctic Fox Lunch Bag Hexa, 10 litres lunch bag </h3>
+          <p>Price: ₹149</p>
+          <button onclick="addToCart('Product 11', 950)">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product">
+        <img src="https://www.jiomart.com/images/product/original/rvbwd3dexb/mkd2-rise-black-ceramic-aroma-oil-diffuser-burner-with-10-ml-lemongrass-oil-three-tea-light-candle-product-images-orvbwd3dexb-p590804958-0-202109271201.jpg?im=Resize=(100,100)" alt="Product 12">
+        <div>
+          <h3> Mkd2 Rise Black Ceramic Aroma Oil 1 Litre</h3>
+          <p>Price: ₹129</p>
+          <button onclick="addToCart('Product 12', 700)">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product">
+        <img src="https://www.jiomart.com/images/product/original/rvqfryt7ts/r-gupta-s-popular-master-guide-dr-br-ambedkar-school-of-specialised-excellence-stem-pcb-medical-admission-test-guide-f-or-class-11th-product-images-orvqfryt7ts-p606767616-0-202312171151.jpg?im=Resize=(100,100)" alt="Product 13">
+        <div>
+          <h3> R. GUPTA'S MASTER GUIDE STEM PCB Book</h3>
+          <p>Price: ₹399</p>
+          <button onclick="addToCart('Product 13', 800)">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product">
+        <img src="https://www.jiomart.com/images/product/original/1113334/medica-clarop-iv-film-trasparent-iv-film-dressing-6-cm-x-7-cm-1-s-prod-o1113334-p608314916-0-202403020744.jpg?im=Resize=(100,100)" alt="Product 14">
+        <div>
+          <h3> Medica Clarop Iv Film Trasparent IV Film Dressing 6 cm x 7 cm     </h3>
+          <p>Price: ₹199</p>
+          <button onclick="addToCart('Product 14', 1200)">Add to Cart</button>
+        </div>
+      </div>
+      <div class="product">
+        <img src="https://www.jiomart.com/images/product/original/598186454/reliance-jewels-925-2-12-gm-silver-bracelet-0-20230207.jpg?im=Resize=(100,100)" alt="Product 15">
+        <div>
+          <h3> Reliance Jewels 925 2.12 GM Silver Bracelet </h3>
+          <p>Price: ₹5,350</p>
+          <button onclick="addToCart('Product 15', 950)">Add to Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="cart-modal">
+    <div class="cart-content">
+      <span class="close-modal" onclick="closeCart()">&times;</span>
+      <h2>Your Cart</h2>
+      <div id="cart-items"></div>
+      <h3>Total: ₹<span id="total-price">0</span></h3>
+      <button onclick="showCheckout()" style="padding: 0.25cm; border-radius: 10px; background-color: #87eff5;">Proceed to Checkout</button>
+    </div>
+  </div>
+
+  <div id="checkout-modal">
+    <div class="checkout-content">
+      <span class="close-modal" onclick="closeCheckout()">&times;</span>
+      <h2>Checkout</h2>
+      <form id="checkout-form" onsubmit="handleCheckout(event)">
+        <input type="text" id="name" placeholder="Name" required />
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="text" id="address" placeholder="Address" required />
+        <button type="submit">Checkout</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="payment-modal">
+    <div class="payment-content">
+      <span class="close-modal" onclick="closePayment()">&times;</span>
+      <h2>Payment</h2>
+      <form id="payment-form" onsubmit="handlePayment(event)">
+        <input type="text" id="card-number" placeholder="Card Number" required />
+        <input type="text" id="expiry-date" placeholder="MM/YY" required />
+        <input type="text" id="cvv" placeholder="CVV" required />
+        <button type="submit">Pay Now</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let cart = [];
+    let total = 0;
+
+    function showSection(sectionId) {
+      const sections = document.querySelectorAll('.frame');
+      sections.forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(sectionId).classList.add('active');
+    }
+
+    function addToCart(productName, productPrice) {
+      cart.push({ name: productName, price: productPrice });
+      total += productPrice;
+      document.getElementById('cart-count').innerText = cart.length;
+    }
+
+    function showCart() {
+      const cartItemsDiv = document.getElementById('cart-items');
+      cartItemsDiv.innerHTML = '';
+      cart.forEach(item => {
+        cartItemsDiv.innerHTML += `<p>${item.name} - ₹${item.price}</p>`;
+      });
+      document.getElementById('total-price').innerText = total;
+      document.getElementById('cart-modal').style.display = 'block';
+    }
+
+    function closeCart() {
+      document.getElementById('cart-modal').style.display = 'none';
+    }
+
+    function showCheckout() {
+      document.getElementById('checkout-modal').style.display = 'block';
+    }
+
+    function closeCheckout() {
+      document.getElementById('checkout-modal'). style.display = 'none';
+    }
+
+    async function handleCheckout(event) {
+      event.preventDefault(); // Prevent default form submission
+
+      const orderDetails = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        address: document.getElementById('address').value,
+      };
+
+      try {
+        const paymentResponse = await processPayment(orderDetails);
+
+        if (paymentResponse.success) {
+          showPayment();
+        } else {
+          alert('Payment failed. Please try again.'); // Handle payment failure
+        }
+      } catch (error) {
+        console.error('Error during checkout:', error);
+        alert('An error occurred. Please try again later.');
+      }
+    }
+
+    function showPayment() {
+      document.getElementById('checkout-modal').style.display = 'none'; // Close checkout modal
+      document.getElementById('payment-modal').style.display = 'block'; // Show payment modal
+    }
+
+    function closePayment() {
+      document.getElementById('payment-modal').style.display = 'none'; // Close payment modal
+    }
+
+    async function handlePayment(event) {
+      event.preventDefault(); 
+
+      const paymentDetails = {
+        cardNumber: document.getElementById('card-number').value,
+        expiryDate: document.getElementById('expiry-date').value,
+        cvv: document.getElementById('cvv').value,
+      };
+
+      try {
+        const paymentResponse = await processPayment(paymentDetails);
+
+        if (paymentResponse.success) {
+          alert('Payment successful! Your order has been placed.'); 
+          closePayment(); 
+          closeCart(); 
+          cart = []; 
+          total = 0; 
+          document.getElementById('cart-count').innerText = cart.length; 
+        } else {
+          alert('Payment failed. Please try again.'); 
+        }
+      } catch (error) {
+        console.error('Error during payment:', error);
+        alert('An error occurred. Please try again later.');
+      }
+    }
+
+    function processPayment(details) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({ success: true }); 
+        }, 1000);
+      });
+    }
+  </script>
+</body>
+</html>
